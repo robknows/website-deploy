@@ -1,2 +1,2 @@
 #!/bin/bash
-ssh -i rob-amazon.pem ubuntu@$(cat PUBLIC_DNS)
+ssh -i $(cat KEY_PATH) ubuntu@$(cat PUBLIC_DNS)
