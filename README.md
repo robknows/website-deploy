@@ -19,7 +19,11 @@ It is intended to be ran on the box itself (not using runOnBox.sh)
 
 ## my-boring-website stuff
 
-You must run up.sh and down.sh as root.
-
 - ./up.sh <port> => Bring up the server to a particular port (I use non-80 ports when trying stuff out locally)
-- ./down.sh      => Bring down the server, regardless of which port it's on.
+- ./down.sh      => Bring down the server, regardless of which port it's on, as long as you're the same user you were when you called ./up.sh
+
+## How it works
+
+- Q serves HTTP GET requests using .z.ph and POST requests using .z.pp.
+- When you press a link on the currently served page (i.e. an <a href="uri"> tag), a GET request is made for the page "www.whatever.com/uri".
+
