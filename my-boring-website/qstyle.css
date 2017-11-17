@@ -1,0 +1,17 @@
+a {
+  text-decoration:none
+}
+a:link {
+  color:024C7E
+}
+a:visited {
+  color:024C7E
+}
+a:active {
+  color:958600
+}
+
+body{
+  font:10pt verdana;
+  text-align:justify
+}

@@ -1,3 +1,5 @@
+\l rob.q // lsRec
+
 // Logging
 \d .log
 logfile:hsym `$.z.x[1];
@@ -14,10 +16,15 @@ ok:{"HTTP/1.1 200 OK\nContent-Type: text/html\nConnection: close\nContent-Length
 \d .
 
 // Routing
-// Maps ReqTxt!Page-to-serve
-pages:("";"favicon.ico";"index.html";"posts/qng.html")!(`:index.html`:index.html`:index.html`:posts/qng.html)
-
-.z.ph:{.http.ok `:fourOfour.html ^ pages x 0}
+.z.ph:{
+  reqTxt: x 0;
+  reqSym: hsym `$"./",reqTxt,".html";
+  files: lsRec `:.;
+  page: `:fourOfour.html;
+  if[reqSym in files;page:reqSym];
+  if[reqSym=`:./.html;page:`:index.html];
+  if[reqTxt~"favicon.ico";page:`:favicon.ico;.log.i["Favicon requested"]];
+  .http.ok page}
 
 // Open port
 system "p ",.z.x[0]
