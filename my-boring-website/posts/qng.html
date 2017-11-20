@@ -1,8 +1,21 @@
 <!DOCTYPE html>
 <head><link rel="stylesheet" href="qstyle.css"/></head>
 <body><h1>PNGs in q using libpng</h1>
-<h3><a href="../index">Home</a></h3></body>
+<h2>Motivation</h2>
 <p>
-  Coming soon...
+  At the start of my image deblurring university group project, I was tasked with
+  blurring some images. An image, at the pixel level, is essentially three matricies
+  representing the red, green and blue contributions to the colours of every pixel,
+  so q seemed like a clear choice. However, since there was no png library for q
+  I had to settle for using <a href="https://www.imagemagick.org/script/index.php">
+  imagemagick</a> and no other image transformation libraries comparable to the
+  vast army of libraries available in python using scipy, opencv etc.
 </p>
+<h2>libpng</h2>
+<p>
+  <a href="http://www.libpng.org/pub/png/libpng.html">Libpng</a> is a C library
+  which acts as the official reference library for PNG images. I chose this
+  library to interface into q because
+</p>
+<h3><a href="../index">Home</a></h3></body>
 <html>
