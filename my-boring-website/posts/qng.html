@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <head><link rel="stylesheet" href="qstyle.css"/></head>
 <body><h1>PNGs in q using libpng</h1>
+<p>
+  This is meant to be the kind of thing I'd have hoped to find while trawling
+  the web for helpful stuff to read.
+</p>
 <h2>Motivation</h2>
 <p>
   At the start of my image deblurring university group project, I was tasked with
@@ -11,7 +15,7 @@
   imagemagick</a> and no other image transformation libraries comparable to the
   vast army of libraries available in python using scipy, opencv etc.
 </p>
-<h2>libpng</h2>
+<h2>Libpng</h2>
 <p>
   <a href="http://www.libpng.org/pub/png/libpng.html">Libpng</a> is a C library
   which acts as the official reference library for PNG images. I chose this
@@ -19,7 +23,142 @@
   standard for png libraries. It is available from the ubuntu package manager
   for download as well, which is handy for build automation.
 </p>
-<h2>Overview of Q's C API</h2>
-<p>// todo</p>
+<h2>First impressions of Q's C API</h2>
+<p>
+  I found it was very easy to pick up. The central structure is a K, which as the
+  <a href="http://code.kx.com/q/interfaces/capiref/">reference documentation</a>
+  will inform you is a <a href="https://en.wikipedia.org/wiki/Tagged_union">tagged union</a>,
+  which basically means that it encapsulates multiple types as well as some other
+  clever stuff which I don't know anything about.
+</p>
+<p>
+  Any function you intend to bind to an actual q session must have return type K
+  it must take at least one argument, and all the arguments must have type K. Now
+  just because you say K myfunction(K x) {...}, it doesn't mean you can't define
+  functions without arguments. The q side of the binding would let you call
+  myfunction without arguments and would behave.
+</p>
+<p>
+  Being a writer primarily of elegant, high level programs, my approach to using
+  these bindings has been that when I'm writing C, "war is war". Whatever abomination
+  comes out the other side has only the requirements of speed and functionality.
+  But when you're writing the q side of the binding, everything should be
+  <a href="http://www.itiseezee.com/?p=119">100% halal.</a>
+</p>
+<h2>Compiling</h2>
+<ul>
+  <li>I saw 'cc' in the docs
+    <a href="http://code.kx.com/q/interfaces/using-c-functions/">here</a> and it
+    worked first time, but I mistyped with gcc or it didn't want to behave or
+    something - I don't know. If I don't have to deal with tools' temper tantrums
+    then I just dont. I went with cc.</li>
+  <li>Your C is to be compiled into a shared library, so you have to specify
+    this to the compiler. I'm not sure about this, but I think it is necessary to
+    ensure that the compiled object has the .so file extension.</li>
+  <li>You must tell the compiler which installed libraries you want the shared
+    object to be linked to, otherwise it won't know and your stuff won't work. This
+    is done with the -l option, which (at least with cc) must be placed at the end
+    of the line. The -l option is then given the name of the library you need to
+    link to. If "lib" are the first three characters of your library, omit them.</li>
+  <li>After everything is all dandy and works, experiment with the -O family of
+    options to improve your code's performance.</li>
+  <li>You may need to specify the option -DKXVER=3 unless you include the line
+    #define KXVER 3 in your C file before you include k.h. Or something other than
+    3 if that's what you're into.</li>
+  <li>When q is trying to read from shared objects, it looks in the directory of
+    the q executable, so they must end up there to be useful.</li>
+</ul>
+<p>
+   My compile script looks like this:
+</p>
+<code>
+  #!/bin/bash<br />
+  sharedlibname="$QHOME/l64/$(basename $1 .c).so"<br />
+  cc -O1 -I. -fPIC -shared -o $sharedlibname $1 -lpng16<br />
+  exit 0<br />
+</code>
+<p>
+  A simple line by line:
+</p>
+<ol>
+  <li>Interpret with bash, the default.</li>
+  <li>The shared lib should be saved as (in this case) "/home/rob/q/l64/libpngk.so"</li>
+  <li>Compile with a few options.</li>
+  <li>Get outta there.</li>
+</ol>
+<h2>Binding</h2>
+<p>
+  It was pretty easy to get something that worked to be honest. I just did what
+  the <a href="http://code.kx.com/q/interfaces/using-c-functions/">docs</a> told
+  me to do.
+</p>
+<p>
+  Taken from my git history, here's the first thing I got to behave.
+</p>
+<ul>
+  <li>
+    Note that the "five" function is defined to take an argument x, but it's unused. This
+    is because of what I mentioned in the "First impressions" section. Your binding
+    functions must take at least one argument.
+  </li>
+  <li>Note also that at this time I was compiling with the -DKXVER=3 option. I don't
+    anymore, and so I've put the #define in here and compiled without the flag. Let this
+    file be called libpngk.c
+  </li>
+</ul>
+<code>
+  #define KXVER 3<br />
+  #include "k.h"<br />
+  #include<png.h> // Just to make sure that this png header is okay.<br />
+<br />
+  K five(K x) {<br />
+    &emsp;&emsp;return ki(5);<br /> <!-- "&emsp;" = a space -->
+  }<br />
+</code>
+<p>From here my terminal might look something like:</p>
+<code>
+$rob ./compile-shared-lib.sh libpngk.c # Does the compiling things I specified before.<br />
+$rob q64 -q # Not really "-q", but I didn't copy paste this so it's easier this way.<br />
+q)five:(`libpngk 2: (`five;1)) // Open up the shared library object and get me the function "five"<br />
+q)five[] // Fingers crossed...<br />
+5 // Hooray!<br />
+q)<br />
+</code>
+<p>
+  Once you get the first iteration of something new in, things start moving a lot
+  faster. All this compiling and linking stuff, well it's all interesting, but it's
+  not all that close to our mission.
+</p>
+<h2>A first use of libpng</h2>
+<p>
+  As above regarding the C API, I began by dipping my toe into libpng because I
+  just wanted a program whose output I could predict to confirm that I was on the
+  right lines. That's science!
+</p>
+<code>
+  ...<br />
+  K version(K x) {<br />
+    &emsp;&emsp;return kp(PNG_LIBPNG_VER_STRING);<br />
+  }<br />
+</code>
+<p>
+  This does what it says on the tin. Now that's out the way we can get somewhere.
+</p>
+<h2>K strings vs symbols</h2>
+<p>
+  // todo
+</p>
+<h2>Reading dimensions</h2>
+<p>
+  // todo
+</p>
+<h2>Reading pixels</h2>
+<p>
+  // todo
+</p>
+<h2>Writing pixels</h2>
+<p>
+  // todo
+</p>
 <h3><a href="../index">Home</a></h3></body>
 <html>
