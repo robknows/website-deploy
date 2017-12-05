@@ -74,10 +74,10 @@
 </p>
 <pre>
 <code>
-#!/bin/bash
-sharedlibname="$QHOME/l64/$(basename $1 .c).so"
-cc -O1 -I. -fPIC -shared -o $sharedlibname $1 -lpng16
-exit 0
+#!/bin/bash<br/>
+sharedlibname="$QHOME/l64/$(basename $1 .c).so"<br/>
+cc -O1 -I. -fPIC -shared -o $sharedlibname $1 -lpng16<br/>
+exit 0<br/>
 </code>
 </pre>
 <p>
@@ -111,24 +111,24 @@ exit 0
 </ul>
 <pre>
 <code>
-#define KXVER 3
-#include "k.h"
-#include<png.h> // Just to make sure that this png header is okay.
-
-K five(K x) {
-  return ki(5);
-}
+#define KXVER 3<br/>
+#include "k.h"<br/>
+#include<png.h> // Just to make sure that this png header is okay.<br/>
+<br/>
+K five(K x) {<br/>
+  return ki(5);<br/>
+}<br/>
 </code>
 </pre>
 <p>From here my terminal might look something like:</p>
 <pre>
 <code>
-$rob ./compile-shared-lib.sh libpngk.c # Does the compiling things I specified before.
-$rob q64 -q # Not really "-q", but I didn't copy paste this so it's easier this way.
-q)five:(`libpngk 2: (`five;1)) // Open up the shared library object and get me the function "five"
-q)five[] // Fingers crossed...
-5 // Hooray!
-q)
+$rob ./compile-shared-lib.sh libpngk.c # Does the compiling things I specified before.<br/>
+$rob q64 -q # Not really "-q", but I didn't copy paste this so it's easier this way.<br/>
+q)five:(`libpngk 2: (`five;1)) // Open up the shared library object and get me the function "five"<br/>
+q)five[] // Fingers crossed...<br/>
+5 // Hooray!<br/>
+q)<br/>
 </code>
 </pre>
 <p>
@@ -144,10 +144,10 @@ q)
 </p>
 <pre>
 <code>
-...
-K version(K x) {
-  return kp(PNG_LIBPNG_VER_STRING);
-}
+...<br/>
+K version(K x) {<br/>
+  return kp(PNG_LIBPNG_VER_STRING);<br/>
+}<br/>
 </code>
 </pre>
 <p>
@@ -191,20 +191,20 @@ K version(K x) {
 </p>
 <pre>
 <code>
->>> scpm.imread('images/dustin.png')
-array([[[ 14,  13,  14, 255],
-        [ 14,  13,  14, 255],
-        [ 14,  13,  14, 255],
-        ...,
-        [ 14,  13,  14, 255],
-        [ 14,  13,  14, 255],
-        [ 14,  13,  14, 255]],
-
-       [[ 14,  13,  14, 255],
-        [ 14,  13,  14, 255],
-        [ 14,  13,  14, 255],
-        ...
-        etc.
+>>> scpm.imread('images/dustin.png')<br/>
+array([[[ 14,  13,  14, 255],<br/>
+        [ 14,  13,  14, 255],<br/>
+        [ 14,  13,  14, 255],<br/>
+        ...,<br/>
+        [ 14,  13,  14, 255],<br/>
+        [ 14,  13,  14, 255],<br/>
+        [ 14,  13,  14, 255]],<br/>
+<br/>
+       [[ 14,  13,  14, 255],<br/>
+        [ 14,  13,  14, 255],<br/>
+        [ 14,  13,  14, 255],<br/>
+        ...<br/>
+        etc.<br/>
 </code>
 </pre>
 <p>
