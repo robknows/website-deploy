@@ -11,7 +11,8 @@ i["=== logger ok ==="]
 
 // HTTP
 \d .http
-ok:{"HTTP/1.1 200 OK\nContent-Type: text/html\nConnection: close\nContent-Length: ",string[count html],"\r\n\r\n",html:raze read0 x}
+// Given a file handle x, creates HTTP response containing the contents of that file.
+ok:{"HTTP/1.1 200 OK\nContent-Type: text/html\nConnection: close\nContent-Length: ",string[count html],"\r\n\r\n",html:"\n" sv read0 x}
 
 \d .
 

@@ -12,6 +12,11 @@ a:active {
 }
 
 body{
-  font:10pt verdana;
+  background-color: linen;
   text-align:justify
+}
+
+pre {
+  font-family: "courier new", courier, monospace;
+  font-size: 18px;
 }
