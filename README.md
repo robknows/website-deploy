@@ -27,7 +27,6 @@ here it is: http://www.robmoore.london
 
 ## Todo
 
-### New
 - HTTPS
 - Compression for sending things over the network
 - Time how long it takes to get the website up and running on a virgin machine
